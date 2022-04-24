@@ -625,7 +625,7 @@ namespace std::execution {
       struct get_forward_progress_guarantee_t {
         template <class _T>
           requires tag_invocable<get_forward_progress_guarantee_t, __cref_t<_T>>
-        tag_invoke_result_t<get_forward_progress_guarantee_t, __cref_t<_T>> operator()(
+        constexpr tag_invoke_result_t<get_forward_progress_guarantee_t, __cref_t<_T>> operator()(
             _T&& __t) const
           noexcept(nothrow_tag_invocable<get_forward_progress_guarantee_t, __cref_t<_T>>) {
           return tag_invoke(get_forward_progress_guarantee_t{}, std::as_const(__t));
