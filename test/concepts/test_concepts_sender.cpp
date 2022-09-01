@@ -92,6 +92,10 @@ TEST_CASE("single_sender_value_t<my_sender0> is void", "[concepts][sender]") {
   REQUIRE(std::is_same_v<ex::__single_sender_value_t<my_sender0>, void>);
 }
 
+TEST_CASE("my_sender0 is a single_sender", "[concepts][sender]") {
+  REQUIRE(ex::__single_typed_sender<my_sender0>);
+}
+
 struct multival_sender {
   using completion_signatures =
     ex::completion_signatures<      //

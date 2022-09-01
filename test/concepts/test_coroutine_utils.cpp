@@ -22,7 +22,7 @@
 
 namespace ex = std::execution;
 
-struct promise {
+struct promise : ex::with_awaitable_senders<promise> {
   std::coroutine_handle<promise> get_return_object() {
     return {std::coroutine_handle<promise>::from_promise(*this)};
   }
@@ -30,6 +30,12 @@ struct promise {
   std::suspend_always final_suspend() noexcept { return {}; }
   void return_void() {}
   void unhandled_exception() {}
+};
+
+struct awaiter {
+  bool await_ready() { return false; }
+  void await_suspend(std::coroutine_handle<promise>) {}
+  void await_resume() {}
 };
 
 struct oper {
@@ -47,8 +53,8 @@ struct my_sender0 {
   friend oper tag_invoke(ex::connect_t, my_sender0, empty_recv::recv0&& r) { return {}; }
 };
 
-TEST_CASE("type w/ proper types, is a sender & sender", "[concepts][sender]") {
-  constexpr auto p = promise{};
-  REQUIRE(ex::__awaitable<decltype(ex::as_awaitable(my_sender0{}, p))>);
-  REQUIRE(ex::sender<my_sender0, empty_env>);
+TEST_CASE("get_awaiter returns awaitable", "[concepts][coroutine_utils]") {
+  auto res = ex::__get_awaiter(awaiter{}, nullptr);
+  REQUIRE(ex::__awaiter<decltype(res)>);
+  REQUIRE(ex::__awaitable<decltype(res)>);
 }
