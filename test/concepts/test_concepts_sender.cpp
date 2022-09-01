@@ -84,6 +84,14 @@ TEST_CASE("can query completion signatures for a typed sender that sends int", "
   check_sends_stopped<true>(my_sender_int{});
 }
 
+TEST_CASE("single_sender_value_t<my_sender_int> is int", "[concepts][sender]") {
+  REQUIRE(std::is_same_v<ex::__single_sender_value_t<my_sender_int>, int>);
+}
+
+TEST_CASE("single_sender_value_t<my_sender0> is void", "[concepts][sender]") {
+  REQUIRE(std::is_same_v<ex::__single_sender_value_t<my_sender0>, void>);
+}
+
 struct multival_sender {
   using completion_signatures =
     ex::completion_signatures<      //
